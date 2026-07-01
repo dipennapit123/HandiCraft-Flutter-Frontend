@@ -39,6 +39,8 @@ dependencies:
   gap: ^3.0.1
   flutter_html: ^3.0.0
 
+  google_fonts: ^8.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
