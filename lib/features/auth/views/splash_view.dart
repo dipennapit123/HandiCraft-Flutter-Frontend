@@ -16,7 +16,7 @@ class _SplashViewState extends State<SplashView> {
     // TODO: implement initState
     //after 3 second it will move to login screen
     Timer(Duration(seconds: 3),(){
-      Get.to(LoginView());
+      Get.off(LoginView());
     });
   }
   @override
