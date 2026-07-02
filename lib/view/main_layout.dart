@@ -1,8 +1,10 @@
 // lib/view/main_layout_view.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
 
-import 'package:handicraftmobilefrontend/view/ShopView.dart'; 
+import 'package:handicraftmobilefrontend/view/ShopView.dart';
+import 'package:handicraftmobilefrontend/view/browse_categories_view.dart'; 
 
 class MainLayoutView extends StatefulWidget {
   const MainLayoutView({super.key});
@@ -16,7 +18,8 @@ class _MainLayoutViewState extends State<MainLayoutView> {
 
   final List<Widget> _pages = [
     const SHopView(), 
-    const Center(child: Text('Orders Page', style: TextStyle(color: AppConstants.secondaryColor))),
+    const BrowseCategoriesView(),
+    // const Center(child: Text('Orders Page', style: TextStyle(color: AppConstants.secondaryColor))),
     const Center(child: Text('Profile Page', style: TextStyle(color: AppConstants.secondaryColor))),
   ];
 
@@ -43,8 +46,8 @@ class _MainLayoutViewState extends State<MainLayoutView> {
           backgroundColor: AppConstants.backgroundColor.withOpacity(0.9),
           selectedItemColor: AppConstants.primaryColor,
           unselectedItemColor: AppConstants.secondaryColor,
-          selectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 12),
+          selectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 12),
+          unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 12),
           type: BottomNavigationBarType.fixed,
           onTap: (index) {
             setState(() {
