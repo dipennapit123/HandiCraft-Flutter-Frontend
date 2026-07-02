@@ -1,7 +1,7 @@
 // lib/view/main_layout_view.dart
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/app_constant.dart';
-import 'package:handicraftmobilefrontend/view/ShopView.dart'; 
+import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
+import 'package:handicraftmobilefrontend/view/ShopView.dart';
 
 class MainLayoutView extends StatefulWidget {
   const MainLayoutView({super.key});
@@ -14,19 +14,26 @@ class _MainLayoutViewState extends State<MainLayoutView> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const SHopView(), 
-    const Center(child: Text('Orders Page', style: TextStyle(color: AppConstants.secondaryColor))),
-    const Center(child: Text('Profile Page', style: TextStyle(color: AppConstants.secondaryColor))),
+    const ShopView(),
+    const Center(
+      child: Text(
+        'Orders Page',
+        style: TextStyle(color: AppConstants.secondaryColor),
+      ),
+    ),
+    const Center(
+      child: Text(
+        'Profile Page',
+        style: TextStyle(color: AppConstants.secondaryColor),
+      ),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -34,7 +41,7 @@ class _MainLayoutViewState extends State<MainLayoutView> {
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -4),
-            )
+            ),
           ],
         ),
         child: BottomNavigationBar(
@@ -42,8 +49,16 @@ class _MainLayoutViewState extends State<MainLayoutView> {
           backgroundColor: AppConstants.backgroundColor.withOpacity(0.9),
           selectedItemColor: AppConstants.primaryColor,
           unselectedItemColor: AppConstants.secondaryColor,
-          selectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 12),
+          selectedLabelStyle: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+          ),
           type: BottomNavigationBarType.fixed,
           onTap: (index) {
             setState(() {
