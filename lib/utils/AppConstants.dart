@@ -8,6 +8,8 @@ class AppConstants {
   static const Color surfaceContainerLow = Color(0xFFFFF0EF);
   static const Color secondaryContainer = Color(0xFFE6E2DA);
   static const Color onSecondaryContainer = Color(0xFF66645E);
+  static const Color cardColor = Color(0xFFFFFFFF);
+  static const Color cardBorderColor = Color(0xFFDDC0BE);
 
   // Layout Spacing (Tailwind mappings)
   static const double paddingSm = 8.0;
