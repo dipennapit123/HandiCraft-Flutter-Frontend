@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/view/main_layout.dart';
+import 'package:handicraftmobilefrontend/view/MainLayout.dart';
+import 'package:handicraftmobilefrontend/view/ProductDetailView.dart';
 import 'package:handicraftmobilefrontend/view/ShopView.dart';
 
 void main() {
@@ -11,13 +12,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'KalaKosh',
       theme: ThemeData(
     
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home:  MainLayoutView(),
+      home:  ProductDetailView(),
     );
   }
 }
