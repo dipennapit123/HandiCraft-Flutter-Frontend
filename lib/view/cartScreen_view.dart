@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
 import 'package:handicraftmobilefrontend/view/checkout_view.dart';
 
-// Renamed from CartScreen -> CartScreenView to match the class name
-// used by Get.to(() => CartScreenView()) in ShopView.dart and product_view.dart.
 class CartScreenView extends StatelessWidget {
   CartScreenView({super.key});
 
@@ -22,15 +21,7 @@ class CartScreenView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
-          'KalaKosh',
-          style: TextStyle(
-            fontFamily: 'Playfair Display',
-            color: Color(0xFF5c0510),
-            fontWeight: FontWeight.w600,
-            fontSize: 24,
-          ),
-        ),
+        title: const Text('KalaKosh', style: AppTextStyles.headlineMedium),
         centerTitle: true,
         actions: [IconButton(icon: const Icon(Icons.search), onPressed: () {})],
       ),
@@ -44,7 +35,11 @@ class CartScreenView extends StatelessWidget {
               children: [
                 const Text(
                   'Your Bag',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
                 ),
                 Obx(
                   () => Text(
@@ -202,14 +197,14 @@ class CartScreenView extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) => Container(
                       width: 80,
                       height: 80,
-                      color: AppConstants.surfaceContainerLow,
+                      color: AppColors.surfaceContainerLow,
                       child: const Icon(Icons.image_not_supported_outlined),
                     ),
                   )
                 : Container(
                     width: 80,
                     height: 80,
-                    color: AppConstants.surfaceContainerLow,
+                    color: AppColors.surfaceContainerLow,
                     child: const Icon(Icons.image_not_supported_outlined),
                   ),
           ),

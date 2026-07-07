@@ -1,7 +1,7 @@
-// lib/view/main_layout_view.dart
+// lib/view/MainLayoutView.dart
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
-import 'package:handicraftmobilefrontend/view/ShopView.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/view/shop_view.dart';
 
 class MainLayoutView extends StatefulWidget {
   const MainLayoutView({super.key});
@@ -13,26 +13,21 @@ class MainLayoutView extends StatefulWidget {
 class _MainLayoutViewState extends State<MainLayoutView> {
   int _currentIndex = 0;
 
+  // Swapped the middle tab to display your new product details page for easy viewing!
   final List<Widget> _pages = [
     const ShopView(),
     const Center(
-      child: Text(
-        'Orders Page',
-        style: TextStyle(color: AppConstants.secondaryColor),
-      ),
+      child: Text('Orders Page', style: TextStyle(color: AppColors.secondary)),
     ),
     const Center(
-      child: Text(
-        'Profile Page',
-        style: TextStyle(color: AppConstants.secondaryColor),
-      ),
+      child: Text('Profile Page', style: TextStyle(color: AppColors.secondary)),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: AppColors.background,
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -46,9 +41,9 @@ class _MainLayoutViewState extends State<MainLayoutView> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          backgroundColor: AppConstants.backgroundColor.withOpacity(0.9),
-          selectedItemColor: AppConstants.primaryColor,
-          unselectedItemColor: AppConstants.secondaryColor,
+          backgroundColor: AppColors.background.withOpacity(0.9),
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: AppColors.secondary,
           selectedLabelStyle: const TextStyle(
             fontFamily: 'Inter',
             fontWeight: FontWeight.w600,
@@ -74,7 +69,7 @@ class _MainLayoutViewState extends State<MainLayoutView> {
             BottomNavigationBarItem(
               icon: Icon(Icons.local_mall_outlined),
               activeIcon: Icon(Icons.local_mall),
-              label: 'Orders',
+              label: 'Details',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle_outlined),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
+import 'package:handicraftmobilefrontend/view/cartScreen_view.dart';
+import 'package:handicraftmobilefrontend/view/checkout_view.dart';
 import 'package:handicraftmobilefrontend/view/main_layout.dart';
 
 void main() {
@@ -15,12 +17,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'KalaKosh',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MainLayoutView(),
+
+      home: CheckoutScreen(),
     );
   }
 }

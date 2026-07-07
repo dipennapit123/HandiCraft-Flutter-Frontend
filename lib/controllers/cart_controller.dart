@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 
 class CartController extends GetxController {
   static CartController get to => Get.find();
@@ -8,7 +8,7 @@ class CartController extends GetxController {
   final RxList<CartItem> cartItems = <CartItem>[].obs;
   final RxDouble totalAmount = 0.0.obs;
 
-  void addToCart(Map<String, dynamic> product) {
+  void addToCart(Map<String, dynamic> product, {int quantity = 1}) {
     String productId =
         (product['_id'] ??
                 product['id'] ??
@@ -20,7 +20,7 @@ class CartController extends GetxController {
     int index = cartItems.indexWhere((item) => item.productId == productId);
 
     if (index != -1) {
-      cartItems[index].quantity.value += 1; // Fixed
+      cartItems[index].quantity.value += quantity; // Fixed
     } else {
       cartItems.add(
         CartItem(
@@ -31,7 +31,7 @@ class CartController extends GetxController {
                 product['price'].toString().replaceAll(RegExp(r'[^0-9.]'), ''),
               ) ??
               0.0,
-          quantity: 1,
+          quantity: quantity,
           imageUrl: product['imageUrl'],
         ),
       );
@@ -42,7 +42,7 @@ class CartController extends GetxController {
     Get.snackbar(
       'Added to Bag',
       '${product['title'] ?? product['name']} added successfully',
-      backgroundColor: AppConstants.primaryColor,
+      backgroundColor: AppColors.primary,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
     );

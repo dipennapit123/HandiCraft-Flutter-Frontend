@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/view/cartScreen_view.dart';
 import 'package:handicraftmobilefrontend/widgets/product_details.dart';
 import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
@@ -33,7 +33,7 @@ class ProductView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppConstants.backgroundColor,
+        backgroundColor: AppColors.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black87),
@@ -43,7 +43,7 @@ class ProductView extends StatelessWidget {
           'KalaKosh',
           style: TextStyle(
             fontFamily: 'Playfair Display',
-            color: AppConstants.primaryColor,
+            color: AppColors.primary,
             fontWeight: FontWeight.w600,
             fontSize: 24,
           ),
@@ -54,7 +54,7 @@ class ProductView extends StatelessWidget {
           IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppConstants.primaryColor,
+              color: AppColors.primary,
             ),
             onPressed: () {},
           ),
@@ -247,7 +247,7 @@ class ProductView extends StatelessWidget {
                         CartController.to.addToCart(product);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppConstants.primaryColor,
+                        backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

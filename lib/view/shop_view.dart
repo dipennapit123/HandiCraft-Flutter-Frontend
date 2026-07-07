@@ -1,11 +1,8 @@
 // lib/view/ShopView.dart
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
-import 'package:handicraftmobilefrontend/view/cartScreen_view.dart';
-import 'package:handicraftmobilefrontend/view/product_view.dart';
-import 'package:handicraftmobilefrontend/controllers/cart_controller.dart'; // New
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
+import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
 
 class ShopView extends StatefulWidget {
   const ShopView({super.key});
@@ -84,73 +81,64 @@ class _SHopViewState extends State<ShopView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppConstants.backgroundColor.withOpacity(0.8),
+        backgroundColor: AppColors.background.withOpacity(0.8),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppConstants.primaryColor),
+          icon: const Icon(Icons.menu, color: AppColors.primary),
           onPressed: () {},
         ),
-        title: const Text(
-          'KalaKosh',
-          style: TextStyle(
-            fontFamily: 'Playfair Display',
-            fontWeight: FontWeight.w600,
-            fontSize: 24,
-            color: AppConstants.primaryColor,
-            letterSpacing: -0.5,
-          ),
-        ),
+        title: const Text('KalaKosh', style: AppTextStyles.headlineMedium),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: AppConstants.primaryColor),
+            icon: const Icon(Icons.search, color: AppColors.primary),
             onPressed: () {},
           ),
           IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppConstants.primaryColor,
+              color: AppColors.primary,
             ),
             onPressed: () {},
           ),
           IconButton(
-            onPressed: () => Get.to(() => CartScreenView()),
             icon: const Icon(
-              Icons.shopping_cart,
-              color: AppConstants.primaryColor,
+              Icons.shopping_cart_outlined,
+              color: AppColors.primary,
             ),
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.paddingMd,
-          vertical: AppConstants.paddingSm,
+          horizontal: AppSizes.paddingMd,
+          vertical: AppSizes.paddingSm,
         ),
         physics: const BouncingScrollPhysics(),
         children: [
-          // 1. Search Box
+          // 1. Heritage Search Field
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search heritage crafts...',
                 hintStyle: const TextStyle(
-                  color: AppConstants.secondaryColor,
+                  color: AppColors.secondary,
                   fontFamily: 'Inter',
                   fontSize: 16,
                 ),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: AppConstants.secondaryColor,
+                  color: AppColors.secondary,
                 ),
-                fillColor: AppConstants.surfaceContainerLow,
+                fillColor: AppColors.surfaceContainerLow,
                 filled: true,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(9999),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -159,7 +147,7 @@ class _SHopViewState extends State<ShopView> {
           ),
           const SizedBox(height: 8),
 
-          // 2. Horizontal Filter Chips
+          // 2. Horizontal Filter Options
           SizedBox(
             height: 44,
             child: ListView.builder(
@@ -184,7 +172,7 @@ class _SHopViewState extends State<ShopView> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      backgroundColor: AppConstants.primaryColor,
+                      backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(9999),
                       ),
@@ -200,13 +188,13 @@ class _SHopViewState extends State<ShopView> {
                     label: Text(
                       category,
                       style: const TextStyle(
-                        color: AppConstants.onSecondaryContainer,
+                        color: AppColors.onSecondaryContainer,
                         fontFamily: 'Inter',
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     selected: false,
-                    backgroundColor: AppConstants.secondaryContainer,
+                    backgroundColor: AppColors.secondaryContainer,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(9999),
                     ),
@@ -219,7 +207,7 @@ class _SHopViewState extends State<ShopView> {
           ),
           const SizedBox(height: 16),
 
-          // 3. Sorting & Layout Icons
+          // 3. Arrangement Header Elements
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -228,7 +216,7 @@ class _SHopViewState extends State<ShopView> {
                   const Text(
                     'Sort by: ',
                     style: TextStyle(
-                      color: AppConstants.secondaryColor,
+                      color: AppColors.secondary,
                       fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
@@ -241,7 +229,7 @@ class _SHopViewState extends State<ShopView> {
                         Text(
                           'New Arrivals',
                           style: TextStyle(
-                            color: AppConstants.primaryColor,
+                            color: AppColors.primary,
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -249,7 +237,7 @@ class _SHopViewState extends State<ShopView> {
                         ),
                         Icon(
                           Icons.keyboard_arrow_down,
-                          color: AppConstants.primaryColor,
+                          color: AppColors.primary,
                           size: 18,
                         ),
                       ],
@@ -260,10 +248,7 @@ class _SHopViewState extends State<ShopView> {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(
-                      Icons.grid_view,
-                      color: AppConstants.primaryColor,
-                    ),
+                    icon: const Icon(Icons.grid_view, color: AppColors.primary),
                     onPressed: () {},
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
@@ -272,13 +257,13 @@ class _SHopViewState extends State<ShopView> {
                   Container(
                     height: 20,
                     width: 1,
-                    color: AppConstants.secondaryColor.withOpacity(0.3),
+                    color: AppColors.secondary.withOpacity(0.3),
                   ),
                   const SizedBox(width: 12),
                   IconButton(
                     icon: const Icon(
                       Icons.format_list_bulleted,
-                      color: AppConstants.secondaryColor,
+                      color: AppColors.secondary,
                     ),
                     onPressed: () {},
                     constraints: const BoxConstraints(),
@@ -290,7 +275,7 @@ class _SHopViewState extends State<ShopView> {
           ),
           const SizedBox(height: 24),
 
-          // 4. Products Grid
+          // 4. Products View Grid Layout (2-Column Aspect Ratio matching 4:5 metric)
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -303,122 +288,117 @@ class _SHopViewState extends State<ShopView> {
             itemCount: products.length,
             itemBuilder: (context, index) {
               final product = products[index];
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => Get.to(() => ProductView(product: product)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24),
-                              color: AppConstants.surfaceContainerLow,
-                              image: DecorationImage(
-                                image: NetworkImage(product['imageUrl']),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  product['isFavorite'] =
-                                      !product['isFavorite'];
-                                });
-                              },
-                              child: Container(
-                                width: 40,
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.6),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  product['isFavorite']
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: AppConstants.primaryColor,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (product['badge'] != null)
-                            Positioned(
-                              bottom: 12,
-                              left: 12,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  product['badge'].toUpperCase(),
-                                  style: const TextStyle(
-                                    color: AppConstants.primaryColor,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      product['title'],
-                      style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF231919),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Row(
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Stack(
                       children: [
-                        const Icon(
-                          Icons.star,
-                          color: AppConstants.primaryColor,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          product['rating'],
-                          style: const TextStyle(
-                            color: AppConstants.secondaryColor,
-                            fontFamily: 'Inter',
-                            fontSize: 14,
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            color: AppColors.surfaceContainerLow,
+                            image: DecorationImage(
+                              image: NetworkImage(product['imageUrl']),
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                product['isFavorite'] = !product['isFavorite'];
+                              });
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.6),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                product['isFavorite']
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (product['badge'] != null)
+                          Positioned(
+                            bottom: 12,
+                            left: 12,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.8),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                product['badge'].toUpperCase(),
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      product['price'],
-                      style: const TextStyle(
-                        color: AppConstants.primaryColor,
-                        fontFamily: 'Inter',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    product['title'],
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF231919),
                     ),
-                  ],
-                ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: AppColors.primary,
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        product['rating'],
+                        style: const TextStyle(
+                          color: AppColors.secondary,
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    product['price'],
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
               );
             },
           ),
