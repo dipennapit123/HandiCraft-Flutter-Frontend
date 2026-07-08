@@ -104,7 +104,7 @@ class _NavItem extends StatelessWidget {
             if (isSelected && label == 'Home')
               Container(
                 padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
@@ -117,8 +117,7 @@ class _NavItem extends StatelessWidget {
             else
               Icon(
                 isSelected ? activeIcon : icon,
-                color:
-                    isSelected ? AppColors.primary : AppColors.navInactive,
+                color: isSelected ? AppColors.primary : AppColors.navInactive,
                 size: 24,
               ),
             const SizedBox(height: 3),
@@ -126,10 +125,8 @@ class _NavItem extends StatelessWidget {
               label,
               style: GoogleFonts.inter(
                 fontSize: 10,
-                fontWeight:
-                    isSelected ? FontWeight.w700 : FontWeight.w500,
-                color:
-                    isSelected ? AppColors.primary : AppColors.navInactive,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? AppColors.primary : AppColors.navInactive,
               ),
             ),
           ],

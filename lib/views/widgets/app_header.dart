@@ -45,7 +45,7 @@ class AppHeader extends StatelessWidget {
                   Container(
                     width: 28,
                     height: 28,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),

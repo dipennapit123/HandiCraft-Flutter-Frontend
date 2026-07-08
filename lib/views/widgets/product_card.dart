@@ -24,11 +24,11 @@ class _ProductCardState extends State<ProductCard> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 10,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3),
           ),
         ],
       ),

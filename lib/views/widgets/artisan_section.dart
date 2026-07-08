@@ -13,11 +13,11 @@ class ArtisanSection extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
             blurRadius: 16,
-            offset: const Offset(0, 4),
+            offset: Offset(0, 4),
           ),
         ],
       ),
