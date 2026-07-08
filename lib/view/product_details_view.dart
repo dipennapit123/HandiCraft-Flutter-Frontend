@@ -1,8 +1,8 @@
 // lib/view/ProductDetailView.dart
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/AppColors.dart';
-import 'package:handicraftmobilefrontend/utils/AppSizes.dart';
-import 'package:handicraftmobilefrontend/utils/AppTextStyles.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
+import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
 
 class ProductDetailView extends StatefulWidget {
   const ProductDetailView({super.key});
@@ -14,14 +14,14 @@ class ProductDetailView extends StatefulWidget {
 class _ProductDetailViewState extends State<ProductDetailView> {
   int _currentGalleryIndex = 0;
   bool _isFavorite = false;
-  int _quantity = 1; 
-  
-  final int _navigationIndex = 1; 
+  int _quantity = 1;
+
+  final int _navigationIndex = 1;
 
   final List<String> galleryImages = [
     'https://images.unsplash.com/photo-1542362567-b07eac790abc?q=80&w=600',
     'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600',
-    'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?q=80&w=600'
+    'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?q=80&w=600',
   ];
 
   @override
@@ -37,16 +37,41 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             leading: Padding(
               padding: const EdgeInsets.only(left: AppSizes.paddingSm),
               child: IconButton(
-                icon: const Icon(Icons.menu, color: AppColors.primary, size: 22),
+                icon: const Icon(
+                  Icons.menu,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
                 onPressed: () {},
               ),
             ),
             title: const Text('KalaKosh', style: AppTextStyles.headlineMedium),
             centerTitle: true,
             actions: [
-              IconButton(icon: const Icon(Icons.search, color: AppColors.primary, size: 22), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.notifications_none, color: AppColors.primary, size: 22), onPressed: () {}),
-              IconButton(icon: const Icon(Icons.shopping_cart_outlined, color: AppColors.primary, size: 22), onPressed: () {}),
+              IconButton(
+                icon: const Icon(
+                  Icons.search,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.notifications_none,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
+                onPressed: () {},
+              ),
               const SizedBox(width: AppSizes.paddingSm),
             ],
           ),
@@ -54,7 +79,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             children: [
               ListView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.only(bottom: 210), 
+                padding: const EdgeInsets.only(bottom: 210),
                 children: [
                   // 1. Resized Image Carousel Gallery Viewport (Changed aspect ratio from 4/5 to 16/10 for a mid-size view)
                   AspectRatio(
@@ -72,10 +97,14 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             return Image.network(
                               galleryImages[index],
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                color: AppColors.surfaceContainerLow,
-                                child: const Icon(Icons.image_not_supported, color: AppColors.secondary),
-                              ),
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Container(
+                                    color: AppColors.surfaceContainerLow,
+                                    child: const Icon(
+                                      Icons.image_not_supported,
+                                      color: AppColors.secondary,
+                                    ),
+                                  ),
                             );
                           },
                         ),
@@ -97,10 +126,15 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                   decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.95),
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: AppColors.secondaryContainer.withOpacity(0.5)),
+                                    border: Border.all(
+                                      color: AppColors.secondaryContainer
+                                          .withOpacity(0.5),
+                                    ),
                                   ),
                                   child: Icon(
-                                    _isFavorite ? Icons.favorite : Icons.favorite_border,
+                                    _isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
                                     color: AppColors.primary,
                                     size: 20,
                                   ),
@@ -113,11 +147,18 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.95),
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: AppColors.secondaryContainer.withOpacity(0.5)),
+                                  border: Border.all(
+                                    color: AppColors.secondaryContainer
+                                        .withOpacity(0.5),
+                                  ),
                                 ),
                                 child: IconButton(
                                   padding: EdgeInsets.zero,
-                                  icon: const Icon(Icons.share_outlined, color: AppColors.primary, size: 20),
+                                  icon: const Icon(
+                                    Icons.share_outlined,
+                                    color: AppColors.primary,
+                                    size: 20,
+                                  ),
                                   onPressed: () {},
                                 ),
                               ),
@@ -131,16 +172,24 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           right: 0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(galleryImages.length, (index) {
+                            children: List.generate(galleryImages.length, (
+                              index,
+                            ) {
                               bool isActive = _currentGalleryIndex == index;
                               return AnimatedContainer(
                                 duration: const Duration(milliseconds: 300),
-                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 3,
+                                ),
                                 height: 5,
                                 width: isActive ? 16 : 5,
                                 decoration: BoxDecoration(
-                                  color: isActive ? AppColors.primary : Colors.white.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
+                                  color: isActive
+                                      ? AppColors.primary
+                                      : Colors.white.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizes.radiusCircular,
+                                  ),
                                 ),
                               );
                             }),
@@ -175,16 +224,30 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             const SizedBox(width: AppSizes.paddingSm),
                             Text(
                               '\$249',
-                              style: AppTextStyles.headlineMedium.copyWith(fontSize: 24),
+                              style: AppTextStyles.headlineMedium.copyWith(
+                                fontSize: 24,
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: AppSizes.paddingXs),
                         const Row(
                           children: [
-                            Icon(Icons.star, color: Color(0xFFFFB300), size: 18),
-                            Icon(Icons.star, color: Color(0xFFFFB300), size: 18),
-                            Icon(Icons.star_border, color: Color(0xFFFFB300), size: 18),
+                            Icon(
+                              Icons.star,
+                              color: Color(0xFFFFB300),
+                              size: 18,
+                            ),
+                            Icon(
+                              Icons.star,
+                              color: Color(0xFFFFB300),
+                              size: 18,
+                            ),
+                            Icon(
+                              Icons.star_border,
+                              color: Color(0xFFFFB300),
+                              size: 18,
+                            ),
                           ],
                         ),
                         const SizedBox(height: AppSizes.paddingLg),
@@ -218,7 +281,10 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           ),
                         ),
                         const SizedBox(height: AppSizes.paddingSm),
-                        _buildSpecificationRow('Material', 'Hand-carved Sacred Oak'),
+                        _buildSpecificationRow(
+                          'Material',
+                          'Hand-carved Sacred Oak',
+                        ),
                         _buildSpecificationRow('Dimensions', '12" x 8" x 6"'),
                         _buildSpecificationRow('Weight', '2.5 lbs'),
                       ],
@@ -236,7 +302,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   decoration: BoxDecoration(
                     color: AppColors.background.withOpacity(0.95),
                     border: Border(
-                      top: BorderSide(color: AppColors.secondaryContainer.withOpacity(0.3)),
+                      top: BorderSide(
+                        color: AppColors.secondaryContainer.withOpacity(0.3),
+                      ),
                     ),
                   ),
                   child: Column(
@@ -258,13 +326,21 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             height: 40,
                             padding: const EdgeInsets.symmetric(horizontal: 2),
                             decoration: BoxDecoration(
-                              color: AppColors.secondaryContainer.withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(AppSizes.radiusBadge),
+                              color: AppColors.secondaryContainer.withOpacity(
+                                0.5,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusBadge,
+                              ),
                             ),
                             child: Row(
                               children: [
                                 IconButton(
-                                  icon: const Icon(Icons.remove, size: 16, color: AppColors.textDark),
+                                  icon: const Icon(
+                                    Icons.remove,
+                                    size: 16,
+                                    color: AppColors.textDark,
+                                  ),
                                   onPressed: () {
                                     if (_quantity > 1) {
                                       setState(() {
@@ -274,7 +350,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                   },
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0,
+                                  ),
                                   child: Text(
                                     '$_quantity',
                                     style: const TextStyle(
@@ -286,7 +364,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                   ),
                                 ),
                                 IconButton(
-                                  icon: const Icon(Icons.add, size: 16, color: AppColors.textDark),
+                                  icon: const Icon(
+                                    Icons.add,
+                                    size: 16,
+                                    color: AppColors.textDark,
+                                  ),
                                   onPressed: () {
                                     setState(() {
                                       _quantity++;
@@ -307,7 +389,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           shadowColor: AppColors.primary.withOpacity(0.3),
                           minimumSize: const Size.fromHeight(48),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusBadge),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusBadge,
+                            ),
                           ),
                         ),
                         onPressed: () {},
@@ -319,10 +403,10 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             Text(
                               'Add to Cart',
                               style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.5,
+                                fontFamily: 'Inter',
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ],
@@ -341,7 +425,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   color: Colors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, -4),
-                )
+                ),
               ],
             ),
             child: BottomNavigationBar(
@@ -349,8 +433,16 @@ class _ProductDetailViewState extends State<ProductDetailView> {
               backgroundColor: AppColors.background.withOpacity(0.95),
               selectedItemColor: AppColors.primary,
               unselectedItemColor: AppColors.secondary,
-              selectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12),
-              unselectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 12),
+              selectedLabelStyle: const TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+              unselectedLabelStyle: const TextStyle(
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+              ),
               type: BottomNavigationBarType.fixed,
               onTap: (index) {},
               items: const [
@@ -381,7 +473,10 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: AppColors.secondaryContainer.withOpacity(0.3), width: 1),
+          bottom: BorderSide(
+            color: AppColors.secondaryContainer.withOpacity(0.3),
+            width: 1,
+          ),
         ),
       ),
       padding: const EdgeInsets.symmetric(vertical: 12),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/AppColors.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 
 class AppTextStyles {
   static const TextStyle headlineMedium = TextStyle(

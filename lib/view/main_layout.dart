@@ -1,8 +1,7 @@
 // lib/view/MainLayoutView.dart
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/AppColors.dart'; 
-import 'package:handicraftmobilefrontend/view/ShopView.dart'; 
-import 'package:handicraftmobilefrontend/view/ProductDetailView.dart'; // Added Details Page
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/view/shop_view.dart';
 
 class MainLayoutView extends StatefulWidget {
   const MainLayoutView({super.key});
@@ -16,19 +15,20 @@ class _MainLayoutViewState extends State<MainLayoutView> {
 
   // Swapped the middle tab to display your new product details page for easy viewing!
   final List<Widget> _pages = [
-    const SHopView(), 
-    const ProductDetailView(), // Tap the middle tab to preview your detail page setup
-    const Center(child: Text('Profile Page', style: TextStyle(color: AppColors.secondary))),
+    const ShopView(),
+    const Center(
+      child: Text('Orders Page', style: TextStyle(color: AppColors.secondary)),
+    ),
+    const Center(
+      child: Text('Profile Page', style: TextStyle(color: AppColors.secondary)),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
@@ -36,16 +36,24 @@ class _MainLayoutViewState extends State<MainLayoutView> {
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -4),
-            )
+            ),
           ],
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          backgroundColor: AppColors.background.withOpacity(0.95),
+          backgroundColor: AppColors.background.withOpacity(0.9),
           selectedItemColor: AppColors.primary,
           unselectedItemColor: AppColors.secondary,
-          selectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600, fontSize: 12),
-          unselectedLabelStyle: const TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w500, fontSize: 12),
+          selectedLabelStyle: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w600,
+            fontSize: 12,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontFamily: 'Inter',
+            fontWeight: FontWeight.w500,
+            fontSize: 12,
+          ),
           type: BottomNavigationBarType.fixed,
           onTap: (index) {
             setState(() {
