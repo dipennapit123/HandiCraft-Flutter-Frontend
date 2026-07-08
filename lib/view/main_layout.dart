@@ -1,8 +1,8 @@
 // lib/view/MainLayoutView.dart
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/AppColors.dart'; 
-import 'package:handicraftmobilefrontend/view/ShopView.dart'; 
-import 'package:handicraftmobilefrontend/view/ProductDetailView.dart'; // Added Details Page
+import 'package:handicraftmobilefrontend/utils/app_colors.dart'; 
+import 'package:handicraftmobilefrontend/view/shop_view.dart'; 
+import 'package:handicraftmobilefrontend/view/product_details_view.dart'; // Added Details Page
 
 class MainLayoutView extends StatefulWidget {
   const MainLayoutView({super.key});

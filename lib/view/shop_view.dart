@@ -1,8 +1,8 @@
 // lib/view/ShopView.dart
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/utils/AppColors.dart';     
-import 'package:handicraftmobilefrontend/utils/AppSizes.dart';      
-import 'package:handicraftmobilefrontend/utils/AppTextStyles.dart'; 
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
+import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
 
 class SHopView extends StatefulWidget {
   const SHopView({super.key});

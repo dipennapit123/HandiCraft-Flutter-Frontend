@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:handicraftmobilefrontend/view/MainLayout.dart';
-import 'package:handicraftmobilefrontend/view/ProductDetailView.dart';
-import 'package:handicraftmobilefrontend/view/ShopView.dart';
+import 'package:handicraftmobilefrontend/view/main_layout.dart';
+import 'package:handicraftmobilefrontend/view/product_details_view.dart';
+import 'package:handicraftmobilefrontend/view/shop_view.dart';
 
 void main() {
   runApp(const MyApp());
