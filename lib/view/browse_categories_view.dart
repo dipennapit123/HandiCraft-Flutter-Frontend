@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
 
 // ---------------------------------------------------------------------------
 // Data model
@@ -64,12 +65,12 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppConstants.backgroundColor.withOpacity(0.8),
+        backgroundColor: AppColors.background.withOpacity(0.8),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppConstants.primaryColor),
+          icon: const Icon(Icons.menu, color: AppColors.primary),
           onPressed: () {},
         ),
         title: Text(
@@ -77,31 +78,31 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
           style: GoogleFonts.playfairDisplay(
             fontWeight: FontWeight.w600,
             fontSize: 24,
-            color: AppConstants.primaryColor,
+            color: AppColors.primary,
             letterSpacing: -0.5,
           ),
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: AppConstants.primaryColor),
+            icon: const Icon(Icons.search, color: AppColors.primary),
             onPressed: () {},
           ),
         ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.paddingMd,
-          vertical: AppConstants.paddingSm,
+          horizontal: AppSizes.paddingMd,
+          vertical: AppSizes.paddingSm,
         ),
         physics: const BouncingScrollPhysics(),
         children: [
           _buildHeader(),
-          const SizedBox(height: AppConstants.paddingMd),
+          const SizedBox(height: AppSizes.paddingMd),
           _buildToggleRow(),
-          const SizedBox(height: AppConstants.paddingMd),
+          const SizedBox(height: AppSizes.paddingMd),
           _isGridView ? _buildGrid() : _buildList(),
-          const SizedBox(height: AppConstants.paddingLg),
+          const SizedBox(height: AppSizes.paddingLg),
         ],
       ),
     );
@@ -114,7 +115,7 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
         Text(
           'Browse Categories',
           style: GoogleFonts.playfairDisplay(
-            color: AppConstants.primaryColor,
+            color: AppColors.primary,
             fontSize: 32,
             fontWeight: FontWeight.w600,
             height: 40 / 32,
@@ -124,7 +125,7 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
         Text(
           'Discover authentic Himalayan craftsmanship\nthrough our curated collections.',
           style: GoogleFonts.inter(
-            color: AppConstants.secondaryColor,
+            color: AppColors.secondary,
             fontSize: 16,
             fontWeight: FontWeight.w400,
             height: 24 / 16,
@@ -142,7 +143,7 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
         Text(
           '',
           style: GoogleFonts.inter(
-            color: AppConstants.secondaryColor,
+            color: AppColors.secondary,
             fontWeight: FontWeight.w600,
             fontSize: 14,
           ),
@@ -153,8 +154,8 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
               icon: Icon(
                 Icons.grid_view,
                 color: _isGridView
-                    ? AppConstants.primaryColor
-                    : AppConstants.secondaryColor,
+                    ? AppColors.primary
+                    : AppColors.secondary,
               ),
               onPressed: () => setState(() => _isGridView = true),
               constraints: const BoxConstraints(),
@@ -164,15 +165,15 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
             Container(
               height: 20,
               width: 1,
-              color: AppConstants.secondaryColor.withOpacity(0.3),
+              color: AppColors.secondary.withOpacity(0.3),
             ),
             const SizedBox(width: 12),
             IconButton(
               icon: Icon(
                 Icons.format_list_bulleted,
                 color: !_isGridView
-                    ? AppConstants.primaryColor
-                    : AppConstants.secondaryColor,
+                    ? AppColors.primary
+                    : AppColors.secondary,
               ),
               onPressed: () => setState(() => _isGridView = false),
               constraints: const BoxConstraints(),
@@ -234,10 +235,10 @@ class CategoryCardVertical extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: AppConstants.cardColor,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppConstants.cardBorderColor.withOpacity(
+            color: Colors.black.withOpacity(
               0.30,
             ), // Stroke: #DDC0BE 30%
             width: 1,
@@ -269,7 +270,7 @@ class CategoryCardVertical extends StatelessWidget {
                     child: const Center(
                       child: Icon(
                         Icons.image_not_supported_outlined,
-                        color: AppConstants.secondaryColor,
+                        color: AppColors.secondary,
                       ),
                     ),
                   ),
@@ -278,7 +279,7 @@ class CategoryCardVertical extends StatelessWidget {
             ),
             // Text area — sits on top of surfaceContainerLow naturally
             Padding(
-              padding: const EdgeInsets.all(AppConstants.paddingMd),
+              padding: const EdgeInsets.all(AppSizes.paddingMd),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -286,7 +287,7 @@ class CategoryCardVertical extends StatelessWidget {
                   Text(
                     item.title,
                     style: GoogleFonts.playfairDisplay(
-                      color: AppConstants.primaryColor,
+                      color: AppColors.primary,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -297,7 +298,7 @@ class CategoryCardVertical extends StatelessWidget {
                   Text(
                     item.subtitle,
                     style: GoogleFonts.inter(
-                      color: AppConstants.secondaryColor,
+                      color: AppColors.secondary,
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                     ),
@@ -331,7 +332,7 @@ class CategoryCardHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppConstants.cardColor,
+      color: Colors.white,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -341,12 +342,12 @@ class CategoryCardHorizontal extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppConstants.cardBorderColor.withOpacity(
+              color: Colors.black.withOpacity(
                 0.30,
               ), // Stroke: #DDC0BE 30%
               width: 1,
             ),
-            color: AppConstants.cardColor,
+            color: Colors.white,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -370,10 +371,10 @@ class CategoryCardHorizontal extends StatelessWidget {
                   errorBuilder: (_, __, ___) => Container(
                     width: 96,
                     height: 96,
-                    color: AppConstants.surfaceContainerLow,
+                    color: AppColors.surfaceContainerLow,
                     child: const Icon(
                       Icons.image_not_supported_outlined,
-                      color: AppConstants.secondaryColor,
+                      color: AppColors.secondary,
                     ),
                   ),
                 ),
@@ -381,8 +382,8 @@ class CategoryCardHorizontal extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.paddingMd,
-                    vertical: AppConstants.paddingSm,
+                    horizontal: AppSizes.paddingMd,
+                    vertical: AppSizes.paddingSm,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,7 +392,7 @@ class CategoryCardHorizontal extends StatelessWidget {
                       Text(
                         item.title,
                         style: GoogleFonts.playfairDisplay(
-                          color: AppConstants.primaryColor,
+                          color: AppColors.primary,
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                         ),
@@ -400,7 +401,7 @@ class CategoryCardHorizontal extends StatelessWidget {
                       Text(
                         item.subtitle,
                         style: GoogleFonts.inter(
-                          color: AppConstants.secondaryColor,
+                          color: AppColors.secondary,
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
                         ),
@@ -410,11 +411,11 @@ class CategoryCardHorizontal extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: AppConstants.paddingMd),
+                padding: const EdgeInsets.only(right: AppSizes.paddingMd),
                 child: Icon(
                   Icons.chevron_right,
                   size: 20,
-                  color: AppConstants.primaryColor.withOpacity(0.3),
+                  color: AppColors.primary.withOpacity(0.3),
                 ),
               ),
             ],

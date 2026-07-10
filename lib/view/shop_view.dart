@@ -1,16 +1,17 @@
 // lib/view/ShopView.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:handicraftmobilefrontend/utils/AppConstants.dart';
+import 'package:handicraftmobilefrontend/utils/app_colors.dart';
+import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
+import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
 
-class SHopView extends StatefulWidget {
-  const SHopView({super.key});
+class ShopView extends StatefulWidget {
+  const ShopView({super.key});
 
   @override
-  State<SHopView> createState() => _SHopViewState();
+  State<ShopView> createState() => _SHopViewState();
 }
 
-class _SHopViewState extends State<SHopView> {
+class _SHopViewState extends State<ShopView> {
   // Dummy data stored directly inside the view state
   final List<Map<String, dynamic>> products = [
     {
@@ -80,40 +81,32 @@ class _SHopViewState extends State<SHopView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppConstants.backgroundColor.withOpacity(0.8),
+        backgroundColor: AppColors.background.withOpacity(0.8),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppConstants.primaryColor),
+          icon: const Icon(Icons.menu, color: AppColors.primary),
           onPressed: () {},
         ),
-        title: Text(
-          'KalaKosh',
-          style: GoogleFonts.playfairDisplay(
-            fontWeight: FontWeight.w600,
-            fontSize: 24,
-            color: AppConstants.primaryColor,
-            letterSpacing: -0.5,
-          ),
-        ),
+        title: const Text('KalaKosh', style: AppTextStyles.headlineMedium),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.search, color: AppConstants.primaryColor),
+            icon: const Icon(Icons.search, color: AppColors.primary),
             onPressed: () {},
           ),
           IconButton(
             icon: const Icon(
               Icons.notifications_none,
-              color: AppConstants.primaryColor,
+              color: AppColors.primary,
             ),
             onPressed: () {},
           ),
           IconButton(
             icon: const Icon(
               Icons.shopping_cart_outlined,
-              color: AppConstants.primaryColor,
+              color: AppColors.primary,
             ),
             onPressed: () {},
           ),
@@ -122,29 +115,30 @@ class _SHopViewState extends State<SHopView> {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppConstants.paddingMd,
-          vertical: AppConstants.paddingSm,
+          horizontal: AppSizes.paddingMd,
+          vertical: AppSizes.paddingSm,
         ),
         physics: const BouncingScrollPhysics(),
         children: [
-          // 1. Search Box
+          // 1. Heritage Search Field
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: TextField(
               decoration: InputDecoration(
                 hintText: 'Search heritage crafts...',
-                hintStyle: GoogleFonts.inter(
-                  color: AppConstants.secondaryColor,
+                hintStyle: const TextStyle(
+                  color: AppColors.secondary,
+                  fontFamily: 'Inter',
                   fontSize: 16,
                 ),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: AppConstants.secondaryColor,
+                  color: AppColors.secondary,
                 ),
-                fillColor: AppConstants.surfaceContainerLow,
+                fillColor: AppColors.surfaceContainerLow,
                 filled: true,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(9999),
+                  borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
@@ -153,7 +147,7 @@ class _SHopViewState extends State<SHopView> {
           ),
           const SizedBox(height: 8),
 
-          // 2. Horizontal Filter Chips
+          // 2. Horizontal Filter Options
           SizedBox(
             height: 44,
             child: ListView.builder(
@@ -170,14 +164,15 @@ class _SHopViewState extends State<SHopView> {
                         color: Colors.white,
                         size: 18,
                       ),
-                      label: Text(
+                      label: const Text(
                         'Filters',
-                        style: GoogleFonts.inter(
+                        style: TextStyle(
                           color: Colors.white,
+                          fontFamily: 'Inter',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      backgroundColor: AppConstants.primaryColor,
+                      backgroundColor: AppColors.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(9999),
                       ),
@@ -192,13 +187,14 @@ class _SHopViewState extends State<SHopView> {
                   child: ChoiceChip(
                     label: Text(
                       category,
-                      style: GoogleFonts.inter(
-                        color: AppConstants.onSecondaryContainer,
+                      style: const TextStyle(
+                        color: AppColors.onSecondaryContainer,
+                        fontFamily: 'Inter',
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     selected: false,
-                    backgroundColor: AppConstants.secondaryContainer,
+                    backgroundColor: AppColors.secondaryContainer,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(9999),
                     ),
@@ -211,16 +207,17 @@ class _SHopViewState extends State<SHopView> {
           ),
           const SizedBox(height: 16),
 
-          // 3. Sorting & Layout Icons
+          // 3. Arrangement Header Elements
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
-                  Text(
+                  const Text(
                     'Sort by: ',
-                    style: GoogleFonts.inter(
-                      color: AppConstants.secondaryColor,
+                    style: TextStyle(
+                      color: AppColors.secondary,
+                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
@@ -231,15 +228,16 @@ class _SHopViewState extends State<SHopView> {
                       children: [
                         Text(
                           'New Arrivals',
-                          style: GoogleFonts.inter(
-                            color: AppConstants.primaryColor,
+                          style: TextStyle(
+                            color: AppColors.primary,
+                            fontFamily: 'Inter',
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                           ),
                         ),
                         Icon(
                           Icons.keyboard_arrow_down,
-                          color: AppConstants.primaryColor,
+                          color: AppColors.primary,
                           size: 18,
                         ),
                       ],
@@ -250,10 +248,7 @@ class _SHopViewState extends State<SHopView> {
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(
-                      Icons.grid_view,
-                      color: AppConstants.primaryColor,
-                    ),
+                    icon: const Icon(Icons.grid_view, color: AppColors.primary),
                     onPressed: () {},
                     constraints: const BoxConstraints(),
                     padding: EdgeInsets.zero,
@@ -262,13 +257,13 @@ class _SHopViewState extends State<SHopView> {
                   Container(
                     height: 20,
                     width: 1,
-                    color: AppConstants.secondaryColor.withOpacity(0.3),
+                    color: AppColors.secondary.withOpacity(0.3),
                   ),
                   const SizedBox(width: 12),
                   IconButton(
                     icon: const Icon(
                       Icons.format_list_bulleted,
-                      color: AppConstants.secondaryColor,
+                      color: AppColors.secondary,
                     ),
                     onPressed: () {},
                     constraints: const BoxConstraints(),
@@ -280,7 +275,7 @@ class _SHopViewState extends State<SHopView> {
           ),
           const SizedBox(height: 24),
 
-          // 4. Products Grid
+          // 4. Products View Grid Layout (2-Column Aspect Ratio matching 4:5 metric)
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -302,7 +297,7 @@ class _SHopViewState extends State<SHopView> {
                         Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(24),
-                            color: AppConstants.surfaceContainerLow,
+                            color: AppColors.surfaceContainerLow,
                             image: DecorationImage(
                               image: NetworkImage(product['imageUrl']),
                               fit: BoxFit.cover,
@@ -329,7 +324,7 @@ class _SHopViewState extends State<SHopView> {
                                 product['isFavorite']
                                     ? Icons.favorite
                                     : Icons.favorite_border,
-                                color: AppConstants.primaryColor,
+                                color: AppColors.primary,
                                 size: 20,
                               ),
                             ),
@@ -351,7 +346,7 @@ class _SHopViewState extends State<SHopView> {
                               child: Text(
                                 product['badge'].toUpperCase(),
                                 style: const TextStyle(
-                                  color: AppConstants.primaryColor,
+                                  color: AppColors.primary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.5,
@@ -365,7 +360,8 @@ class _SHopViewState extends State<SHopView> {
                   const SizedBox(height: 8),
                   Text(
                     product['title'],
-                    style:GoogleFonts.inter(
+                    style: const TextStyle(
+                      fontFamily: 'Inter',
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Color(0xFF231919),
@@ -378,14 +374,15 @@ class _SHopViewState extends State<SHopView> {
                     children: [
                       const Icon(
                         Icons.star,
-                        color: AppConstants.primaryColor,
+                        color: AppColors.primary,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         product['rating'],
-                        style: GoogleFonts.inter(
-                          color: AppConstants.secondaryColor,
+                        style: const TextStyle(
+                          color: AppColors.secondary,
+                          fontFamily: 'Inter',
                           fontSize: 14,
                         ),
                       ),
@@ -394,8 +391,9 @@ class _SHopViewState extends State<SHopView> {
                   const SizedBox(height: 2),
                   Text(
                     product['price'],
-                    style: GoogleFonts.inter(
-                      color: AppConstants.primaryColor,
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontFamily: 'Inter',
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
