@@ -26,18 +26,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home:SplashView(),
+      home:CartScreenView(),
     );
   }
 }
 
-    return MaterialApp(
-      title: 'KalaKosh',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
-
-      home: CheckoutScreen(),
-    );
-  }
-}
