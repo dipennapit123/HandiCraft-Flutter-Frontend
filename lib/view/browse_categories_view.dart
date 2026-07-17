@@ -1,66 +1,16 @@
+// lib/views/browse_categories_view.dart
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:handicraftmobilefrontend/controllers/category_controller.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
 
-// ---------------------------------------------------------------------------
-// Data model
-// ---------------------------------------------------------------------------
+class BrowseCategoriesView extends StatelessWidget {
+  BrowseCategoriesView({super.key});
 
-class CategoryItem {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
-
-  const CategoryItem({
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-  });
-}
-
-const List<CategoryItem> kCategories = [
-  CategoryItem(
-    title: 'Paintings',
-    subtitle: 'Exquisite Traditional Artworks & Thangkas',
-    imageUrl: 'https://picsum.photos/seed/paintings/400/300',
-  ),
-  CategoryItem(
-    title: 'Textiles',
-    subtitle: 'Premium Cashmere & Hand-loomed Silks',
-    imageUrl: 'https://picsum.photos/seed/textiles/400/300',
-  ),
-  CategoryItem(
-    title: 'Jewelry',
-    subtitle: 'Handcrafted Silver & Ethnic Gemstones',
-    imageUrl: 'https://picsum.photos/seed/jewelry/400/300',
-  ),
-  CategoryItem(
-    title: 'Pottery',
-    subtitle: 'Artisanal Terracotta & Glazed Ceramics',
-    imageUrl: 'https://picsum.photos/seed/pottery/400/300',
-  ),
-  CategoryItem(
-    title: 'Wood Crafts',
-    subtitle: 'Intricate Hand-carved Architectural Pieces',
-    imageUrl: 'https://picsum.photos/seed/woodcrafts/400/300',
-  ),
-  CategoryItem(
-    title: 'Metal Crafts',
-    subtitle: 'Singing Bowls & Hand-beaten Vessels',
-    imageUrl: 'https://picsum.photos/seed/metalcrafts/400/300',
-  ),
-];
-
-class BrowseCategoriesView extends StatefulWidget {
-  const BrowseCategoriesView({super.key});
-
-  @override
-  State<BrowseCategoriesView> createState() => _BrowseCategoriesViewState();
-}
-
-class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
-  bool _isGridView = true;
+  final CategoryController controller = Get.put(CategoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -90,21 +40,71 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingMd,
-          vertical: AppSizes.paddingSm,
-        ),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          _buildHeader(),
-          const SizedBox(height: AppSizes.paddingMd),
-          _buildToggleRow(),
-          const SizedBox(height: AppSizes.paddingMd),
-          _isGridView ? _buildGrid() : _buildList(),
-          const SizedBox(height: AppSizes.paddingLg),
-        ],
-      ),
+      body: Obx(() {
+        // Loading state
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.primary),
+          );
+        }
+
+        // Error state
+        if (controller.error.value.isNotEmpty) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.wifi_off_outlined,
+                  color: AppColors.secondary,
+                  size: 48,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Could not load categories',
+                  style: GoogleFonts.inter(
+                    color: AppColors.secondary,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: controller.fetchCategories,
+                  icon: const Icon(Icons.refresh),
+                  label: Text(
+                    'Retry',
+                    style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Success state
+        return ListView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingMd,
+            vertical: AppSizes.paddingSm,
+          ),
+          physics: const BouncingScrollPhysics(),
+          children: [
+            _buildHeader(),
+            const SizedBox(height: AppSizes.paddingMd),
+            _buildToggleRow(),
+            const SizedBox(height: AppSizes.paddingMd),
+            controller.isGridView.value ? _buildGrid() : _buildList(),
+            const SizedBox(height: AppSizes.paddingLg),
+          ],
+        );
+      }),
     );
   }
 
@@ -135,53 +135,54 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
     );
   }
 
-  // Grid/list toggle row — same pattern as ShopView's sort row
   Widget _buildToggleRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          '',
-          style: GoogleFonts.inter(
-            color: AppColors.secondary,
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
+    return Obx(
+      () => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            '${controller.categories.length} Categories',
+            style: GoogleFonts.inter(
+              color: AppColors.secondary,
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
           ),
-        ),
-        Row(
-          children: [
-            IconButton(
-              icon: Icon(
-                Icons.grid_view,
-                color: _isGridView
-                    ? AppColors.primary
-                    : AppColors.secondary,
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.grid_view,
+                  color: controller.isGridView.value
+                      ? AppColors.primary
+                      : AppColors.secondary,
+                ),
+                onPressed: () => controller.toggleView(true),
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
               ),
-              onPressed: () => setState(() => _isGridView = true),
-              constraints: const BoxConstraints(),
-              padding: EdgeInsets.zero,
-            ),
-            const SizedBox(width: 12),
-            Container(
-              height: 20,
-              width: 1,
-              color: AppColors.secondary.withOpacity(0.3),
-            ),
-            const SizedBox(width: 12),
-            IconButton(
-              icon: Icon(
-                Icons.format_list_bulleted,
-                color: !_isGridView
-                    ? AppColors.primary
-                    : AppColors.secondary,
+              const SizedBox(width: 12),
+              Container(
+                height: 20,
+                width: 1,
+                color: AppColors.secondary.withOpacity(0.3),
               ),
-              onPressed: () => setState(() => _isGridView = false),
-              constraints: const BoxConstraints(),
-              padding: EdgeInsets.zero,
-            ),
-          ],
-        ),
-      ],
+              const SizedBox(width: 12),
+              IconButton(
+                icon: Icon(
+                  Icons.format_list_bulleted,
+                  color: !controller.isGridView.value
+                      ? AppColors.primary
+                      : AppColors.secondary,
+                ),
+                onPressed: () => controller.toggleView(false),
+                constraints: const BoxConstraints(),
+                padding: EdgeInsets.zero,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -195,9 +196,14 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
         mainAxisSpacing: 16,
         childAspectRatio: 0.75,
       ),
-      itemCount: kCategories.length,
+      itemCount: controller.categories.length,
       itemBuilder: (context, index) {
-        return CategoryCardVertical(item: kCategories[index], onTap: () {});
+        final c = controller.categories[index];
+        return CategoryCardVertical(
+          name: c.name ?? '',
+          imageUrl: controller.imageUrl(c),
+          onTap: () {},
+        );
       },
     );
   }
@@ -206,10 +212,15 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: kCategories.length,
+      itemCount: controller.categories.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
-        return CategoryCardHorizontal(item: kCategories[index], onTap: () {});
+        final c = controller.categories[index];
+        return CategoryCardHorizontal(
+          name: c.name ?? '',
+          imageUrl: controller.imageUrl(c),
+          onTap: () {},
+        );
       },
     );
   }
@@ -220,12 +231,14 @@ class _BrowseCategoriesViewState extends State<BrowseCategoriesView> {
 // ---------------------------------------------------------------------------
 
 class CategoryCardVertical extends StatelessWidget {
-  final CategoryItem item;
+  final String name;
+  final String imageUrl;
   final VoidCallback onTap;
 
   const CategoryCardVertical({
     super.key,
-    required this.item,
+    required this.name,
+    required this.imageUrl,
     required this.onTap,
   });
 
@@ -238,9 +251,7 @@ class CategoryCardVertical extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.black.withOpacity(
-              0.30,
-            ), // Stroke: #DDC0BE 30%
+            color: const Color(0x4DDDC0BE),
             width: 1,
           ),
           boxShadow: [
@@ -261,51 +272,56 @@ class CategoryCardVertical extends StatelessWidget {
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                 ),
-                child: Image.network(
-                  item.imageUrl,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: Colors.white,
-                    child: const Center(
-                      child: Icon(
-                        Icons.image_not_supported_outlined,
-                        color: AppColors.secondary,
+                child: imageUrl.isEmpty
+                    ? Container(
+                        color: AppColors.surfaceContainerLow,
+                        child: const Center(
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      )
+                    : Image.network(
+                        imageUrl,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: AppColors.surfaceContainerLow,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Container(
+                          color: AppColors.surfaceContainerLow,
+                          child: const Center(
+                            child: Icon(
+                              Icons.image_not_supported_outlined,
+                              color: AppColors.secondary,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ),
             ),
-            // Text area — sits on top of surfaceContainerLow naturally
+            // Text area
             Padding(
               padding: const EdgeInsets.all(AppSizes.paddingMd),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    item.title,
-                    style: GoogleFonts.playfairDisplay(
-                      color: AppColors.primary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    item.subtitle,
-                    style: GoogleFonts.inter(
-                      color: AppColors.secondary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+              child: Text(
+                name,
+                style: GoogleFonts.playfairDisplay(
+                  color: AppColors.primary,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
@@ -320,12 +336,14 @@ class CategoryCardVertical extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class CategoryCardHorizontal extends StatelessWidget {
-  final CategoryItem item;
+  final String name;
+  final String imageUrl;
   final VoidCallback onTap;
 
   const CategoryCardHorizontal({
     super.key,
-    required this.item,
+    required this.name,
+    required this.imageUrl,
     required this.onTap,
   });
 
@@ -337,14 +355,11 @@ class CategoryCardHorizontal extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: Colors.black.withOpacity(
-                0.30,
-              ), // Stroke: #DDC0BE 30%
+              color: const Color(0x4DDDC0BE),
               width: 1,
             ),
             color: Colors.white,
@@ -363,21 +378,45 @@ class CategoryCardHorizontal extends StatelessWidget {
                   topLeft: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
-                child: Image.network(
-                  item.imageUrl,
-                  width: 96,
-                  height: 96,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    width: 96,
-                    height: 96,
-                    color: AppColors.surfaceContainerLow,
-                    child: const Icon(
-                      Icons.image_not_supported_outlined,
-                      color: AppColors.secondary,
-                    ),
-                  ),
-                ),
+                child: imageUrl.isEmpty
+                    ? Container(
+                        width: 96,
+                        height: 96,
+                        color: AppColors.surfaceContainerLow,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          color: AppColors.secondary,
+                        ),
+                      )
+                    : Image.network(
+                        imageUrl,
+                        width: 96,
+                        height: 96,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            width: 96,
+                            height: 96,
+                            color: AppColors.surfaceContainerLow,
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          );
+                        },
+                        errorBuilder: (_, __, ___) => Container(
+                          width: 96,
+                          height: 96,
+                          color: AppColors.surfaceContainerLow,
+                          child: const Icon(
+                            Icons.image_not_supported_outlined,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ),
               ),
               Expanded(
                 child: Padding(
@@ -385,28 +424,13 @@ class CategoryCardHorizontal extends StatelessWidget {
                     horizontal: AppSizes.paddingMd,
                     vertical: AppSizes.paddingSm,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        item.title,
-                        style: GoogleFonts.playfairDisplay(
-                          color: AppColors.primary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        item.subtitle,
-                        style: GoogleFonts.inter(
-                          color: AppColors.secondary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    name,
+                    style: GoogleFonts.playfairDisplay(
+                      color: AppColors.primary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
