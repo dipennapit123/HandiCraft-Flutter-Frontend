@@ -7,4 +7,7 @@ class AppStrings {
   static const String filterButtonText = 'Filters';
   static const String limitedBadge = 'LIMITED';
   static const String ecoBadge = 'ECO-CONSCIOUS';
+
+  static const String baseUrl =
+      'https://kalakosh-e-commerce-platform.onrender.com';
 }

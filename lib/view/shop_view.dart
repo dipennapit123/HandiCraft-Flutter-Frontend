@@ -224,7 +224,7 @@ class _SHopViewState extends State<ShopView> {
                   ),
                   InkWell(
                     onTap: () {},
-                    child: const Row(
+                    child: Row(
                       children: [
                         Text(
                           'New Arrivals',
