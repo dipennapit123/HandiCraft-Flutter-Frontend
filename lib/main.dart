@@ -3,11 +3,15 @@
 // Starting point of the app. Flutter runs main() first.
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_strings.dart';
 import 'package:handicraftmobilefrontend/view/main_layout.dart';
 
 void main() {
+  // Register CartController once, before any screen calls Get.find<CartController>()
+  Get.put(CartController());
   runApp(const MyApp());
 }
 
@@ -17,7 +21,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // GetMaterialApp, not MaterialApp, because the cart and checkout screens
+    // move around with Get.to() and show messages with Get.snackbar().
+    // Those calls only work inside a GetMaterialApp.
+    return GetMaterialApp(
       title: AppStrings.appTitle,
       // Hides the "DEBUG" ribbon in the corner.
       debugShowCheckedModeBanner: false,

@@ -7,6 +7,10 @@ class AppStrings {
   // General
   static const String appTitle = 'KalaKosh';
 
+  // Address of the deployed backend, used by the categories feature.
+  static const String baseUrl =
+      'https://kalakosh-e-commerce-platform.onrender.com';
+
   // Shop screen
   static const String searchPlaceholder = 'Search heritage crafts...';
   static const String sortByLabel = 'Sort by: ';
@@ -14,6 +18,10 @@ class AppStrings {
   static const String priceFilterChip = 'Under \$500';
   static const String noProductsFound = 'No products found';
   static const String loadProductsError = 'Could not load products';
+
+  // Badges drawn on top of a product image
+  static const String limitedBadge = 'LIMITED';
+  static const String ecoBadge = 'ECO-CONSCIOUS';
 
   // Sort menu
   static const String sortSheetTitle = 'Sort by';

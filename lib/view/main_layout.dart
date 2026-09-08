@@ -1,11 +1,6 @@
-// lib/view/main_layout.dart
-//
-// The shell of the app: it holds the bottom navigation bar and swaps
-// between the three main screens.
-
+// lib/view/MainLayoutView.dart
 import 'package:flutter/material.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
-import 'package:handicraftmobilefrontend/view/product_details_view.dart';
 import 'package:handicraftmobilefrontend/view/shop_view.dart';
 
 class MainLayoutView extends StatefulWidget {
@@ -16,16 +11,15 @@ class MainLayoutView extends StatefulWidget {
 }
 
 class _MainLayoutViewState extends State<MainLayoutView> {
-  // Which tab is open (0 = first tab).
   int _currentIndex = 0;
 
-  // The screens behind the three tabs.
-  // ProductDetailView gets showBottomNav: false because this layout
-  // already draws the bottom bar.
-  final List<Widget> _pages = const [
-    ShopView(),
-    ProductDetailView(showBottomNav: false),
-    Center(
+  // Swapped the middle tab to display your new product details page for easy viewing!
+  final List<Widget> _pages = [
+    const ShopView(),
+    const Center(
+      child: Text('Orders Page', style: TextStyle(color: AppColors.secondary)),
+    ),
+    const Center(
       child: Text('Profile Page', style: TextStyle(color: AppColors.secondary)),
     ),
   ];
@@ -34,14 +28,12 @@ class _MainLayoutViewState extends State<MainLayoutView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      // IndexedStack keeps every screen alive, so the shop keeps its
-      // products and scroll position when the user comes back to it.
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
+              color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, -4),
             ),
@@ -49,7 +41,7 @@ class _MainLayoutViewState extends State<MainLayoutView> {
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
-          backgroundColor: AppColors.background.withValues(alpha: 0.95),
+          backgroundColor: AppColors.background.withOpacity(0.9),
           selectedItemColor: AppColors.primary,
           unselectedItemColor: AppColors.secondary,
           selectedLabelStyle: const TextStyle(
@@ -64,7 +56,9 @@ class _MainLayoutViewState extends State<MainLayoutView> {
           ),
           type: BottomNavigationBarType.fixed,
           onTap: (index) {
-            setState(() => _currentIndex = index);
+            setState(() {
+              _currentIndex = index;
+            });
           },
           items: const [
             BottomNavigationBarItem(
