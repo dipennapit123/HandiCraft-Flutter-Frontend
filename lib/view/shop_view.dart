@@ -1,346 +1,432 @@
-// lib/view/ShopView.dart
+// lib/view/shop_view.dart
+//
+// The shop screen. It shows the product grid that comes from the backend.
+//
+// What this screen does:
+//   1. asks ProductService for the categories and the products
+//   2. keeps the answer in state variables
+//   3. shows a spinner, an error, or the grid
+//
+// The small UI pieces (search box, chips, product card) live in lib/widgets
+// so this file stays about the logic.
+
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:handicraftmobilefrontend/models/product_model.dart';
+import 'package:handicraftmobilefrontend/models/sort_option.dart';
+import 'package:handicraftmobilefrontend/services/product_service.dart';
+import 'package:handicraftmobilefrontend/utils/api_error.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
+import 'package:handicraftmobilefrontend/utils/app_strings.dart';
 import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
+import 'package:handicraftmobilefrontend/view/product_details_view.dart';
+import 'package:handicraftmobilefrontend/widgets/category_chips.dart';
+import 'package:handicraftmobilefrontend/widgets/product_card.dart';
+import 'package:handicraftmobilefrontend/widgets/product_search_box.dart';
+import 'package:handicraftmobilefrontend/widgets/status_view.dart';
 
-class SHopView extends StatefulWidget {
-  const SHopView({super.key});
+class ShopView extends StatefulWidget {
+  const ShopView({super.key});
 
   @override
-  State<SHopView> createState() => _SHopViewState();
+  State<ShopView> createState() => _ShopViewState();
 }
 
-class _SHopViewState extends State<SHopView> {
-  // Static Dummy Data embedded right inside the view state
-  final List<Map<String, dynamic>> products = [
-    {
-      'title': 'Sacred Oak Buddha',
-      'price': '\$1,250.00',
-      'rating': '4.9 (124)',
-      'badge': 'Limited',
-      'imageUrl': 'https://images.unsplash.com/photo-1542362567-b07eac790abc?q=80&w=600',
-      'isFavorite': true,
-    },
-    {
-      'title': 'Heritage Pashmina',
-      'price': '\$420.00',
-      'rating': '4.8 (89)',
-      'badge': null,
-      'imageUrl': 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600',
-      'isFavorite': false,
-    },
-    {
-      'title': 'Himalayan Clay Set',
-      'price': '\$185.00',
-      'rating': '5.0 (42)',
-      'badge': 'Eco-Conscious',
-      'imageUrl': 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?q=80&w=600',
-      'isFavorite': false,
-    },
-    {
-      'title': 'Master\'s Singing Bowl',
-      'price': '\$340.00',
-      'rating': '4.7 (215)',
-      'badge': null,
-      'imageUrl': 'https://images.unsplash.com/photo-1590736969955-71cc94801759?q=80&w=600',
-      'isFavorite': false,
-    },
-    {
-      'title': 'Traditional Bronze Tara',
-      'price': '\$1,100.00',
-      'rating': '4.9 (76)',
-      'badge': null,
-      'imageUrl': 'https://images.unsplash.com/photo-1615486511484-92e172cc4ee0?q=80&w=600',
-      'isFavorite': false,
-    },
-    {
-      'title': 'Hand-Knotted Hemp Rug',
-      'price': '\$280.00',
-      'rating': '4.6 (54)',
-      'badge': null,
-      'imageUrl': 'https://images.unsplash.com/photo-1600166898405-da9535204843?q=80&w=600',
-      'isFavorite': false,
-    },
-  ];
+class _ShopViewState extends State<ShopView> {
+  // Talks to the backend for us.
+  final ProductService _productService = ProductService();
 
-  final List<String> categories = [
-    'Under \$500', 
-    'Hand-Carved', 
-    'Natural Silk', 
-    'Brass Works', 
-    'Ceramics'
-  ];
+  // Reads the text the user types in the search box.
+  final TextEditingController _searchController = TextEditingController();
+
+  // Waits a moment before searching, so we do not call the API on every letter.
+  Timer? _searchTimer;
+
+  // ----- Data from the backend -----
+  List<ProductModel> _products = [];
+  List<String> _chips = [AppStrings.priceFilterChip];
+
+  // ----- Screen state -----
+  bool _isLoading = true;
+  String? _errorMessage; // null means "no error"
+
+  // ----- Filters chosen by the user -----
+  String? _selectedChip;
+  String? _selectedCategory; // sent as ?category=Pottery
+  double? _maxPrice; // sent as ?maxPrice=500
+  SortOption _sortOption = SortOption.newest;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load everything as soon as the screen opens.
+    _loadEverything();
+  }
+
+  @override
+  void dispose() {
+    // Always clean up controllers and timers, otherwise they leak memory.
+    _searchTimer?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // -------------------------------------------------------------------------
+  // API calls
+  // -------------------------------------------------------------------------
+
+  /// Loads the filter chips and the products together.
+  /// Also used by pull-to-refresh.
+  Future<void> _loadEverything() async {
+    await Future.wait([_loadCategories(), _loadProducts()]);
+  }
+
+  /// GET /api/categories -> chips above the grid.
+  Future<void> _loadCategories() async {
+    try {
+      final List<String> names = await _productService.getCategoryNames();
+      if (!mounted) return;
+
+      setState(() {
+        _chips = [AppStrings.priceFilterChip, ...names];
+      });
+    } catch (_) {
+      // Chips are not important enough to show an error for.
+      // The products can still load without them.
+    }
+  }
+
+  /// GET /api/products (or /api/products/search when the user typed something).
+  Future<void> _loadProducts() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final String searchText = _searchController.text.trim();
+      List<ProductModel> products;
+
+      if (searchText.isNotEmpty) {
+        products = await _productService.searchProducts(searchText);
+      } else {
+        final result = await _productService.getProducts(
+          category: _selectedCategory,
+          maxPrice: _maxPrice,
+          sort: _sortOption.value,
+        );
+        products = result.products;
+      }
+
+      // The user may have left the screen while we were waiting.
+      if (!mounted) return;
+
+      setState(() {
+        _products = products;
+        _isLoading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoading = false;
+        _errorMessage = apiErrorMessage(
+          error,
+          fallback: AppStrings.loadProductsError,
+        );
+      });
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // User actions
+  // -------------------------------------------------------------------------
+
+  /// Runs on every letter typed. We wait 450 ms of silence before calling the
+  /// API, otherwise typing "pot" would send three requests.
+  void _onSearchChanged(String text) {
+    setState(() {}); // redraws the clear (x) button
+    _searchTimer?.cancel();
+    _searchTimer = Timer(const Duration(milliseconds: 450), _loadProducts);
+  }
+
+  /// Empties the search box and shows the normal product list again.
+  void _onSearchCleared() {
+    _searchController.clear();
+    setState(() {});
+    _loadProducts();
+  }
+
+  /// Tapping a chip turns the filter on. Tapping the same chip again turns
+  /// it off.
+  void _onChipTap(String chip) {
+    setState(() {
+      if (_selectedChip == chip) {
+        _clearFilterValues();
+      } else {
+        _selectedChip = chip;
+
+        if (chip == AppStrings.priceFilterChip) {
+          _maxPrice = 500;
+          _selectedCategory = null;
+        } else {
+          _maxPrice = null;
+          _selectedCategory = chip;
+        }
+      }
+      _searchController.clear();
+    });
+
+    _loadProducts();
+  }
+
+  /// The "Filters" chip removes every filter and the search text.
+  void _onClearFilters() {
+    setState(() {
+      _clearFilterValues();
+      _searchController.clear();
+    });
+    _loadProducts();
+  }
+
+  /// Resets the filter variables. Called from two places, so it is a method.
+  void _clearFilterValues() {
+    _selectedChip = null;
+    _selectedCategory = null;
+    _maxPrice = null;
+  }
+
+  /// Opens the "Sort by" bottom sheet and reloads with the chosen order.
+  Future<void> _openSortMenu() async {
+    final SortOption? chosen = await showModalBottomSheet<SortOption>(
+      context: context,
+      backgroundColor: AppColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => _buildSortSheet(),
+    );
+
+    // chosen is null when the user closes the sheet without picking.
+    if (chosen == null) return;
+
+    setState(() => _sortOption = chosen);
+    _loadProducts();
+  }
+
+  /// Opens the detail screen for the tapped product.
+  void _openProductDetail(ProductModel product) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ProductDetailView(
+          productId: product.id,
+          // We pass the product we already have so the detail screen can
+          // show something immediately instead of an empty spinner.
+          initialProduct: product,
+        ),
+      ),
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // UI
+  // -------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background.withOpacity(0.8),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.primary),
+      appBar: _buildAppBar(),
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: _loadEverything,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSizes.paddingMd,
+            vertical: AppSizes.paddingSm,
+          ),
+          // Lets the user pull down to refresh even when the list is short.
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          children: [
+            ProductSearchBox(
+              controller: _searchController,
+              onChanged: _onSearchChanged,
+              onClear: _onSearchCleared,
+            ),
+            const SizedBox(height: AppSizes.paddingMd),
+
+            CategoryChips(
+              chips: _chips,
+              selectedChip: _selectedChip,
+              onChipTap: _onChipTap,
+              onClearFilters: _onClearFilters,
+            ),
+            const SizedBox(height: AppSizes.paddingMd),
+
+            _buildSortRow(),
+            const SizedBox(height: AppSizes.paddingLg),
+
+            // Only one of these three is shown at a time.
+            _buildProductArea(),
+            const SizedBox(height: AppSizes.paddingLg),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: AppColors.background.withValues(alpha: 0.8),
+      elevation: 0,
+      centerTitle: true,
+      title: const Text(
+        AppStrings.appTitle,
+        style: AppTextStyles.headlineMedium,
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.menu, color: AppColors.primary),
+        onPressed: () {},
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications_none, color: AppColors.primary),
           onPressed: () {},
         ),
-        title: const Text('KalaKosh', style: AppTextStyles.headlineMedium),
-        centerTitle: true,
-        actions: [
-          IconButton(icon: const Icon(Icons.search, color: AppColors.primary), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.notifications_none, color: AppColors.primary), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.shopping_cart_outlined, color: AppColors.primary), onPressed: () {}),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.paddingMd, 
-          vertical: AppSizes.paddingSm
+        IconButton(
+          icon: const Icon(
+            Icons.shopping_cart_outlined,
+            color: AppColors.primary,
+          ),
+          onPressed: () {},
         ),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          // 1. Heritage Search Field
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search heritage crafts...',
-                hintStyle: const TextStyle(
-                  color: AppColors.secondary, 
-                  fontFamily: 'Inter', 
-                  fontSize: 16
-                ),
-                prefixIcon: const Icon(Icons.search, color: AppColors.secondary),
-                fillColor: AppColors.surfaceContainerLow,
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppSizes.radiusCircular),
-                  borderSide: BorderSide.none,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
+        const SizedBox(width: AppSizes.paddingSm),
+      ],
+    );
+  }
 
-          // 2. Horizontal Filter Options
-          SizedBox(
-            height: 44,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: categories.length + 1,
-              physics: const BouncingScrollPhysics(),
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: ActionChip(
-                      avatar: const Icon(Icons.tune, color: Colors.white, size: 18),
-                      label: const Text(
-                        'Filters', 
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontFamily: 'Inter', 
-                          fontWeight: FontWeight.w600
-                        )
-                      ),
-                      backgroundColor: AppColors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSizes.radiusCircular)
-                      ),
-                      side: BorderSide.none,
-                      onPressed: () {},
-                    ),
-                  );
-                }
-                final category = categories[index - 1];
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ChoiceChip(
-                    label: Text(category, style: AppTextStyles.labelMedium),
-                    selected: false,
-                    backgroundColor: AppColors.secondaryContainer,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.radiusCircular)
-                    ),
-                    side: BorderSide.none,
-                    onSelected: (bool selected) {},
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // 3. Arrangement Header Elements
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  /// "Sort by: New Arrivals" on the left, "12 items" on the right.
+  Widget _buildSortRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        InkWell(
+          onTap: _openSortMenu,
+          child: Row(
             children: [
-              Row(
-                children: [
-                  const Text(
-                    'Sort by: ', 
-                    style: TextStyle(
-                      color: AppColors.secondary, 
-                      fontFamily: 'Inter', 
-                      fontWeight: FontWeight.w600, 
-                      fontSize: 14
-                    )
-                  ),
-                  InkWell(
-                    onTap: () {},
-                    child: const Row(
-                      children: [
-                        Text(
-                          'New Arrivals', 
-                          style: TextStyle(
-                            color: AppColors.primary, 
-                            fontFamily: 'Inter', 
-                            fontWeight: FontWeight.w600, 
-                            fontSize: 14
-                          )
-                        ),
-                        Icon(Icons.keyboard_arrow_down, color: AppColors.primary, size: 18),
-                      ],
-                    ),
-                  ),
-                ],
+              const Text(
+                AppStrings.sortByLabel,
+                style: TextStyle(
+                  color: AppColors.secondary,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.grid_view, color: AppColors.primary),
-                    onPressed: () {},
-                    constraints: const BoxConstraints(),
-                    padding: EdgeInsets.zero,
-                  ),
-                  const SizedBox(width: 12),
-                  Container(height: 20, width: 1, color: AppColors.secondary.withOpacity(0.3)),
-                  const SizedBox(width: 12),
-                  IconButton(
-                    icon: const Icon(Icons.format_list_bulleted, color: AppColors.secondary),
-                    onPressed: () {},
-                    constraints: const BoxConstraints(),
-                    padding: EdgeInsets.zero,
-                  ),
-                ],
+              Text(
+                _sortOption.label,
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontFamily: 'Inter',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
+              ),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                color: AppColors.primary,
+                size: 18,
               ),
             ],
           ),
-          const SizedBox(height: 24),
-
-          // 4. Products View Grid Layout (2-Column Aspect Ratio matching 4:5 metric)
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 32,
-              childAspectRatio: 0.64, 
-            ),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(AppSizes.radiusCard),
-                            color: AppColors.surfaceContainerLow,
-                            image: DecorationImage(
-                              image: NetworkImage(product['imageUrl']),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                product['isFavorite'] = !product['isFavorite'];
-                              });
-                            },
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.6),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                product['isFavorite'] ? Icons.favorite : Icons.favorite_border,
-                                color: AppColors.primary,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (product['badge'] != null)
-                          Positioned(
-                            bottom: 12,
-                            left: 12,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.8),
-                                borderRadius: BorderRadius.circular(AppSizes.radiusBadge),
-                              ),
-                              child: Text(
-                                product['badge'].toUpperCase(),
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    product['title'],
-                    style: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.w500),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      const Icon(Icons.star, color: AppColors.primary, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        product['rating'],
-                        style: const TextStyle(color: AppColors.secondary, fontFamily: 'Inter', fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    product['price'],
-                    style: const TextStyle(
-                      color: AppColors.primary,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              );
-            },
+        ),
+        Text(
+          _isLoading ? '' : '${_products.length} items',
+          style: const TextStyle(
+            color: AppColors.secondary,
+            fontFamily: 'Inter',
+            fontSize: 13,
           ),
-          const SizedBox(height: 24), 
+        ),
+      ],
+    );
+  }
+
+  /// The bottom sheet with the four sort choices.
+  Widget _buildSortSheet() {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: AppSizes.paddingMd),
+          const Text(
+            AppStrings.sortSheetTitle,
+            style: AppTextStyles.headlineMedium,
+          ),
+          const SizedBox(height: AppSizes.paddingSm),
+          for (final SortOption option in SortOption.all)
+            ListTile(
+              title: Text(option.label, style: AppTextStyles.bodyMedium),
+              // A tick marks the option that is active now.
+              trailing: _sortOption.value == option.value
+                  ? const Icon(Icons.check, color: AppColors.primary)
+                  : null,
+              onTap: () => Navigator.pop(context, option),
+            ),
+          const SizedBox(height: AppSizes.paddingSm),
         ],
       ),
+    );
+  }
+
+  /// Decides what to show where the grid goes: spinner, error, empty text
+  /// or the products.
+  Widget _buildProductArea() {
+    if (_isLoading) {
+      return const LoadingView();
+    }
+
+    if (_errorMessage != null) {
+      return ErrorView(message: _errorMessage!, onRetry: _loadProducts);
+    }
+
+    if (_products.isEmpty) {
+      return const EmptyView(message: AppStrings.noProductsFound);
+    }
+
+    return _buildProductGrid();
+  }
+
+  /// Two products per row.
+  Widget _buildProductGrid() {
+    return GridView.builder(
+      // The grid is inside a ListView, so it must not scroll on its own.
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 32,
+        childAspectRatio: 0.64,
+      ),
+      itemCount: _products.length,
+      itemBuilder: (context, index) {
+        final ProductModel product = _products[index];
+
+        return ProductCard(
+          product: product,
+          onTap: () => _openProductDetail(product),
+          onFavoriteTap: () {
+            // Only a UI change for now. Saving favourites needs the
+            // wishlist API, which is another feature branch.
+            setState(() => product.isFavorite = !product.isFavorite);
+          },
+        );
+      },
     );
   }
 }
