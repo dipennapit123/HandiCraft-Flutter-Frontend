@@ -1,38 +1,42 @@
 // lib/utils/api_constants.dart
 //
-// Keeps the backend address in ONE place.
-// If the API address changes, we only edit this file.
-
-import 'dart:io' show Platform;
-
-import 'package:flutter/foundation.dart' show kIsWeb;
+// ONE place for the backend address.
+// Every feature (shop, categories, cart, wishlist, auth) should import this
+// file and only add its own route, for example:
+//
+//   ApiConstants.baseUrl + '/products'
+//   ApiConstants.baseUrl + '/categories'
+//   ApiClient.dio.get('/products')   // Dio already has baseUrl set
+//
+// Do NOT put the server URL in AppStrings, views, or controllers.
 
 class ApiConstants {
-  // Port where the Node/Express backend runs (npm run dev).
-  static const int port = 5000;
+  /// Server host only (no /api).
+  /// Use this for images: ApiConstants.serverUrl + '/images/pot.jpg'
+  static const String _defaultServerUrl =
+      'https://kalakosh-e-commerce-platform.onrender.com';
 
-  // Optional override when running the app:
-  // flutter run --dart-define=API_BASE_URL=http://192.168.1.10:5000/api
+  /// Optional override when running the backend on your own machine:
+  ///
+  ///   flutter run --dart-define=API_BASE_URL=http://localhost:5000/api
+  ///
+  /// On the Android emulator use http://10.0.2.2:5000/api instead of localhost.
   static const String _customBaseUrl = String.fromEnvironment('API_BASE_URL');
 
-  /// Full API address, example: http://localhost:5000/api
+  /// Full API root, example:
+  /// https://kalakosh-e-commerce-platform.onrender.com/api
+  ///
+  /// All routes start from here:
+  ///   /products, /categories, /cart, /wishlist, /auth/...
   static String get baseUrl {
-    // 1. Use the custom address if one was given while running the app.
     if (_customBaseUrl.isNotEmpty) {
-      return _customBaseUrl;
+      return _stripTrailingSlash(_customBaseUrl);
     }
-
-    // 2. Android emulator cannot use "localhost", it uses 10.0.2.2 instead.
-    if (!kIsWeb && Platform.isAndroid) {
-      return 'http://10.0.2.2:$port/api';
-    }
-
-    // 3. iOS simulator, macOS and web can use localhost.
-    return 'http://localhost:$port/api';
+    return '$_defaultServerUrl/api';
   }
 
-  /// Server address without "/api", example: http://localhost:5000
-  /// Used to build full image links when the API returns "/images/pot.jpg".
+  /// Server address without "/api".
+  /// Built from [baseUrl] so a custom override still works for images.
   static String get serverUrl {
     String url = baseUrl;
 
@@ -45,7 +49,14 @@ class ApiConstants {
     return url;
   }
 
-  // How long we wait before showing a connection error.
-  static const Duration connectTimeout = Duration(seconds: 15);
-  static const Duration receiveTimeout = Duration(seconds: 15);
+  // Render's free plan sleeps when idle and can take up to a minute to wake.
+  static const Duration connectTimeout = Duration(seconds: 60);
+  static const Duration receiveTimeout = Duration(seconds: 60);
+
+  static String _stripTrailingSlash(String url) {
+    if (url.endsWith('/')) {
+      return url.substring(0, url.length - 1);
+    }
+    return url;
+  }
 }

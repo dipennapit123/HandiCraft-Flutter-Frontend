@@ -19,8 +19,9 @@ String apiErrorMessage(
       error.type == DioExceptionType.connectionTimeout;
 
   if (cannotConnect) {
-    return 'Cannot reach the server at ${ApiConstants.baseUrl}.\n'
-        'Please make sure the backend is running.';
+    return 'Cannot reach the server.\n'
+        'Please check your internet connection and try again.\n\n'
+        '(${ApiConstants.baseUrl})';
   }
 
   // The server answered, but with an error like { "message": "Not found" }.

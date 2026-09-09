@@ -7,10 +7,6 @@ class AppStrings {
   // General
   static const String appTitle = 'KalaKosh';
 
-  // Address of the deployed backend, used by the categories feature.
-  static const String baseUrl =
-      'https://kalakosh-e-commerce-platform.onrender.com';
-
   // Shop screen
   static const String searchPlaceholder = 'Search heritage crafts...';
   static const String sortByLabel = 'Sort by: ';
