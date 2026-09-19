@@ -1,6 +1,7 @@
 // lib/views/checkout_view.dart
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
@@ -163,8 +164,8 @@ class _CheckoutViewState extends State<CheckoutView> {
         backgroundColor: AppColors.background.withOpacity(0.8),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.menu, color: AppColors.primary),
-          onPressed: () {},
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.primary),
+          onPressed: () => Get.back(),
         ),
         title: Text(
           'KalaKosh',
