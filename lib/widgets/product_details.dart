@@ -4,7 +4,7 @@ class ProductDetail extends StatelessWidget {
   final String label;
   final String value;
 
-  const ProductDetail({required this.label, required this.value});
+  const ProductDetail({super.key, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
