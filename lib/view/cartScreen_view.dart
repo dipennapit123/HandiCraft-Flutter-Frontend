@@ -353,7 +353,7 @@ class CartScreenView extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             itemCount: _dummyRecommended.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            separatorBuilder: (_, _) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               return _RecommendedCard(item: _dummyRecommended[index]);
             },
@@ -534,7 +534,7 @@ class _CartItemCard extends StatelessWidget {
                     width: 96,
                     height: 96,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    errorBuilder: (_, _, _) => Container(
                       width: 96,
                       height: 96,
                       color: AppColors.surfaceContainerLow,
@@ -701,7 +701,7 @@ class _RecommendedCard extends StatelessWidget {
                   width: 160,
                   height: 160,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, _, _) => Container(
                     width: 160,
                     height: 160,
                     color: AppColors.surfaceContainerLow,
