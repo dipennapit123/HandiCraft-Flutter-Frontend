@@ -13,6 +13,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
 import 'package:handicraftmobilefrontend/models/product_model.dart';
 import 'package:handicraftmobilefrontend/models/sort_option.dart';
 import 'package:handicraftmobilefrontend/services/product_service.dart';
@@ -21,6 +23,7 @@ import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
 import 'package:handicraftmobilefrontend/utils/app_strings.dart';
 import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
+import 'package:handicraftmobilefrontend/view/cartScreen_view.dart';
 import 'package:handicraftmobilefrontend/view/product_details_view.dart';
 import 'package:handicraftmobilefrontend/widgets/category_chips.dart';
 import 'package:handicraftmobilefrontend/widgets/product_card.dart';
@@ -297,13 +300,46 @@ class _ShopViewState extends State<ShopView> {
           icon: const Icon(Icons.notifications_none, color: AppColors.primary),
           onPressed: () {},
         ),
-        IconButton(
-          icon: const Icon(
-            Icons.shopping_cart_outlined,
-            color: AppColors.primary,
-          ),
-          onPressed: () {},
-        ),
+        Obx(() {
+          final count = CartController.to.itemCount;
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: AppColors.primary,
+                ),
+                onPressed: () => Get.to(() => const CartScreenView()),
+              ),
+              if (count > 0)
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      count > 99 ? '99+' : '$count',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }),
         const SizedBox(width: AppSizes.paddingSm),
       ],
     );

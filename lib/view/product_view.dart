@@ -1,3 +1,10 @@
+// lib/view/product_details_view.dart  (updated sections only)
+//
+// Changes from original:
+// 1. CartController registered via Get.put in build so it's always available.
+// 2. Cart icon in AppBar now shows a badge with live item count via Obx.
+// 3. "Add to Cart" button calls CartController.to.addToCart(product).
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
@@ -10,24 +17,26 @@ class ProductView extends StatelessWidget {
 
   const ProductView({super.key, required this.product});
 
-  // Pulls the leading number out of a rating string like "4.9 (124)" -> 4.9
   double get _ratingValue {
-    final match = RegExp(
-      r'[\d.]+',
-    ).firstMatch(product['rating']?.toString() ?? '');
+    final match = RegExp(r'[\d.]+').firstMatch(
+      product['rating']?.toString() ?? '',
+    );
     return double.tryParse(match?.group(0) ?? '') ?? 0;
   }
 
   @override
   Widget build(BuildContext context) {
+    // Ensure CartController is registered — safe to call even if already put
+    if (!Get.isRegistered<CartController>()) {
+      Get.put(CartController());
+    }
+
     final String title = product['title'] ?? 'Unknown Product';
     final String price = product['price']?.toString() ?? '';
     final String? imageUrl = product['imageUrl'];
-    final String description =
-        product['description'] ??
+    final String description = product['description'] ??
         'Hand-crafted by master artisans in the Kathmandu Valley. Each piece is unique, reflecting centuries of Himalayan craft tradition.';
-    final String material =
-        product['material'] ?? 'Hand-crafted, natural materials';
+    final String material = product['material'] ?? 'Hand-crafted, natural materials';
     final String dimensions = product['dimensions'] ?? 'Varies by piece';
     final String weight = product['weight'] ?? 'Varies by piece';
 
@@ -50,21 +59,48 @@ class ProductView extends StatelessWidget {
         ),
         centerTitle: true,
         actions: [
-          //notification button
           IconButton(
-            icon: const Icon(
-              Icons.notifications_none,
-              color: AppColors.primary,
-            ),
+            icon: const Icon(Icons.notifications_none, color: AppColors.primary),
             onPressed: () {},
           ),
-          //cart button
-          IconButton(
-            onPressed: () {
-              Get.to(() => CartScreenView());
-            },
-            icon: const Icon(Icons.shopping_cart),
-          ),
+          // Cart icon with live badge
+          Obx(() {
+            final count = CartController.to.itemCount;
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  onPressed: () => Get.to(() => const CartScreenView()),
+                  icon: const Icon(Icons.shopping_cart, color: AppColors.primary),
+                ),
+                if (count > 0)
+                  Positioned(
+                    top: 4,
+                    right: 4,
+                    child: Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        count > 99 ? '99+' : '$count',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          }),
         ],
       ),
       body: SingleChildScrollView(
@@ -83,7 +119,6 @@ class ProductView extends StatelessWidget {
               ),
               child: Stack(
                 children: [
-                  // Main Image
                   Center(
                     child: imageUrl != null
                         ? Image.network(
@@ -91,18 +126,10 @@ class ProductView extends StatelessWidget {
                             height: 280,
                             fit: BoxFit.contain,
                             errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                                  Icons.image_not_supported_outlined,
-                                  size: 64,
-                                ),
+                                const Icon(Icons.image_not_supported_outlined, size: 64),
                           )
-                        : const Icon(
-                            Icons.image_not_supported_outlined,
-                            size: 64,
-                          ),
+                        : const Icon(Icons.image_not_supported_outlined, size: 64),
                   ),
-
-                  // Heart icon (favorite)
                   Positioned(
                     bottom: 50,
                     right: 20,
@@ -118,14 +145,9 @@ class ProductView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.favorite_border,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
+                      child: const Icon(Icons.favorite_border, color: Colors.grey, size: 18),
                     ),
                   ),
-                  // Share icon
                   Positioned(
                     bottom: 15,
                     right: 20,
@@ -141,11 +163,7 @@ class ProductView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.share,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
+                      child: const Icon(Icons.share, color: Colors.grey, size: 18),
                     ),
                   ),
                 ],
@@ -157,7 +175,6 @@ class ProductView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title and Price
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +201,6 @@ class ProductView extends StatelessWidget {
 
                   const SizedBox(height: 8),
 
-                  // Rating
                   Row(
                     children: [
                       ...List.generate(5, (i) {
@@ -209,7 +225,6 @@ class ProductView extends StatelessWidget {
 
                   const SizedBox(height: 14),
 
-                  // Description
                   const Text(
                     'Description',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -226,7 +241,6 @@ class ProductView extends StatelessWidget {
 
                   const SizedBox(height: 14),
 
-                  // Product Details
                   const Text(
                     'Product Details',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -238,14 +252,12 @@ class ProductView extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  // Add to Cart Button
+                  // Add to Cart button — calls controller
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {
-                        CartController.to.addToCart(product);
-                      },
+                      onPressed: () => CartController.to.addToCart(product),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(

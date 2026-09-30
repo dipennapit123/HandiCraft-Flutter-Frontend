@@ -213,7 +213,7 @@ class BrowseCategoriesView extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: controller.categories.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final c = controller.categories[index];
         return CategoryCardHorizontal(
@@ -298,7 +298,7 @@ class CategoryCardVertical extends StatelessWidget {
                             ),
                           );
                         },
-                        errorBuilder: (_, __, ___) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           color: AppColors.surfaceContainerLow,
                           child: const Center(
                             child: Icon(
@@ -407,7 +407,7 @@ class CategoryCardHorizontal extends StatelessWidget {
                             ),
                           );
                         },
-                        errorBuilder: (_, __, ___) => Container(
+                        errorBuilder: (_, _, _) => Container(
                           width: 96,
                           height: 96,
                           color: AppColors.surfaceContainerLow,

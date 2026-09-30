@@ -7,11 +7,13 @@ import 'package:get/get.dart';
 import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
 import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_strings.dart';
+import 'package:handicraftmobilefrontend/view/cartScreen_view.dart';
 import 'package:handicraftmobilefrontend/view/main_layout.dart';
+import 'package:handicraftmobilefrontend/view/shop_view.dart';
 
 void main() {
   // Register CartController once, before any screen calls Get.find<CartController>()
-  Get.put(CartController());
+  Get.put(CartController(), permanent: true);
   runApp(const MyApp());
 }
 

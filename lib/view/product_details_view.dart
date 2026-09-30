@@ -7,6 +7,8 @@
 // with GET /api/products/:id.
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:handicraftmobilefrontend/controllers/cart_controller.dart';
 import 'package:handicraftmobilefrontend/models/product_model.dart';
 import 'package:handicraftmobilefrontend/services/product_service.dart';
 import 'package:handicraftmobilefrontend/utils/api_error.dart';
@@ -14,6 +16,7 @@ import 'package:handicraftmobilefrontend/utils/app_colors.dart';
 import 'package:handicraftmobilefrontend/utils/app_sizes.dart';
 import 'package:handicraftmobilefrontend/utils/app_strings.dart';
 import 'package:handicraftmobilefrontend/utils/app_text_styles.dart';
+import 'package:handicraftmobilefrontend/view/cartScreen_view.dart';
 import 'package:handicraftmobilefrontend/widgets/add_to_cart_bar.dart';
 import 'package:handicraftmobilefrontend/widgets/product_gallery.dart';
 import 'package:handicraftmobilefrontend/widgets/specification_row.dart';
@@ -141,14 +144,15 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   // -------------------------------------------------------------------------
 
   void _onAddToCart() {
-    // The cart API belongs to another feature branch, so for now we only
-    // confirm the action with a small message.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: AppColors.primary,
-        content: Text('${_product?.name ?? 'Product'} x $_quantity added'),
-      ),
-    );
+    if (_product == null) return;
+    CartController.to.addToCart({
+      'id': _product!.id,
+      'title': _product!.name,
+      'price': _product!.price, 
+      'imageUrl': _product!.allImages.isNotEmpty
+          ? _product!.allImages.first
+          : '',
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -186,13 +190,46 @@ class _ProductDetailViewState extends State<ProductDetailView> {
         onPressed: canPop ? () => Navigator.of(context).pop() : () {},
       ),
       actions: [
-        IconButton(
-          icon: const Icon(
-            Icons.shopping_cart_outlined,
-            color: AppColors.primary,
-          ),
-          onPressed: () {},
-        ),
+        Obx(() {
+          final count = CartController.to.itemCount;
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.shopping_cart_outlined,
+                  color: AppColors.primary,
+                ),
+                onPressed: () => Get.to(() => const CartScreenView()),
+              ),
+              if (count > 0)
+                Positioned(
+                  top: 4,
+                  right: 4,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      count > 99 ? '99+' : '$count',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          );
+        }),
         const SizedBox(width: AppSizes.paddingSm),
       ],
     );
